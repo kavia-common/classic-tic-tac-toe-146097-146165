@@ -10,3 +10,16 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Ocean Professional base tweaks */
+:root {
+  --ocean-primary: #2563EB; /* blue-600 */
+  --ocean-amber: #F59E0B;   /* amber-500 */
+  --ocean-error: #EF4444;   /* red-500 */
+  --ocean-surface: #ffffff;
+  --ocean-bg: #f9fafb;
+}
+
+* {
+  @apply antialiased;
+}
