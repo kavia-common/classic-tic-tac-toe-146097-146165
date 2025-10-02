@@ -36,6 +36,27 @@ function calculateWinner(squares: Board): { winner: Player; line: number[] } | n
   return null;
 }
 
+// Render player icon: X -> Knight, O -> Queen
+function renderPlayerIcon(player: Player) {
+  if (player === "X") {
+    // Unicode: Black Chess Knight ♞ (U+265E)
+    return (
+      <span role="img" aria-label="Knight" className="block">
+        ♞
+      </span>
+    );
+  }
+  if (player === "O") {
+    // Unicode: Black Chess Queen ♛ (U+265B)
+    return (
+      <span role="img" aria-label="Queen" className="block">
+        ♛
+      </span>
+    );
+  }
+  return "";
+}
+
 export default function Index() {
   const [board, setBoard] = useState<Board>(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState(true);
@@ -59,20 +80,25 @@ export default function Index() {
     setXIsNext(true);
   }
 
+  // Human-readable player labels for status using icons
+  const labelFor = (p: Player) =>
+    p === "X" ? "Knight" : p === "O" ? "Queen" : "";
+
   const status = winnerInfo
-    ? `Winner: ${winnerInfo.winner}`
+    ? `Winner: ${labelFor(winnerInfo.winner)}`
     : isDraw
     ? "It's a draw!"
-    : `Next player: ${currentPlayer}`;
+    : `Next player: ${labelFor(currentPlayer)}`;
 
   // Styling helpers (Ocean Professional theme)
   const cellBase =
     "aspect-square w-24 sm:w-28 md:w-32 flex items-center justify-center rounded-xl bg-white/80 backdrop-blur " +
     "shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer select-none border border-blue-100";
+  // Larger icon size and refined weight for chess pieces
   const cellText =
-    "text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight";
-  const xStyles = "text-blue-600";
-  const oStyles = "text-amber-500";
+    "text-5xl sm:text-6xl md:text-7xl font-semibold tracking-tight leading-none";
+  const xStyles = "text-blue-600 drop-shadow-[0_1px_0_rgba(37,99,235,0.25)]";
+  const oStyles = "text-amber-500 drop-shadow-[0_1px_0_rgba(245,158,11,0.25)]";
   const disabledCell = "opacity-60 cursor-not-allowed";
   const winningCell =
     "ring-2 ring-offset-2 ring-blue-400 ring-offset-blue-50 shadow-lg";
@@ -86,7 +112,7 @@ export default function Index() {
             Classic Tic Tac Toe
           </h1>
           <p className="mt-2 text-center text-sm sm:text-base text-gray-600">
-            Two players. Take turns placing X and O. First to align three wins.
+            Two players. Take turns placing Knights and Queens. First to align three wins.
           </p>
         </header>
 
@@ -122,7 +148,9 @@ export default function Index() {
               <button
                 key={idx}
                 role="gridcell"
-                aria-label={`Cell ${idx + 1} ${value ? "occupied by " + value : "empty"}`}
+                aria-label={`Cell ${idx + 1} ${
+                  value ? "occupied by " + (value === "X" ? "Knight" : "Queen") : "empty"
+                }`}
                 onClick={() => handleClick(idx)}
                 className={[
                   cellBase,
@@ -138,7 +166,7 @@ export default function Index() {
                     value === "O" ? oStyles : "",
                   ].join(" ")}
                 >
-                  {value ?? ""}
+                  {renderPlayerIcon(value)}
                 </span>
               </button>
             );
